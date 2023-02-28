@@ -1,3 +1,38 @@
+var express = require('express')
+var app = express() //Application 객체
+const port = 3000
+var template = require('./lib/template.js');
+var fs = require('fs');
+
+// app.get('/', (req, res) => {
+//     res.send('Hello World!')
+// })
+//route, routing : 경로 설정
+app.get('/', function (request, response) {
+    fs.readdir('./data', function(error, filelist){
+        var title = 'Welcome';
+        var description = 'Hello, Node.js';
+        var list = template.list(filelist);
+        var html = template.HTML(title, list,
+            `<h2>${title}</h2>${description}`,
+            `<a href="/create">create</a>`
+        );
+        // response.writeHead(200);
+        // response.end(html);
+        response.send(html);
+    });
+})
+
+//url path에 get으로 parameter 전달
+app.get('/page/:pageId', function (request, response) {
+    return response.send(request.params);
+})
+//listen이 실행되면서 web server를 인자로 넘겨준 port로 실행
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+})
+
+/*
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
@@ -10,6 +45,9 @@ var app = http.createServer(function(request,response){
     var _url = request.url;
     var queryData = url.parse(_url, true).query;
     var pathname = url.parse(_url, true).pathname;
+
+    var body = '';
+
     if(pathname === '/'){
       if(queryData.id === undefined){
         fs.readdir('./data', function(error, filelist){
@@ -66,7 +104,7 @@ var app = http.createServer(function(request,response){
         response.end(html);
       });
     } else if(pathname === '/create_process'){
-      var body = '';
+
       request.on('data', function(data){
           body = body + data;
       });
@@ -105,7 +143,6 @@ var app = http.createServer(function(request,response){
         });
       });
     } else if(pathname === '/update_process'){
-      var body = '';
       request.on('data', function(data){
           body = body + data;
       });
@@ -122,7 +159,6 @@ var app = http.createServer(function(request,response){
           });
       });
     } else if(pathname === '/delete_process'){
-      var body = '';
       request.on('data', function(data){
           body = body + data;
       });
@@ -141,3 +177,4 @@ var app = http.createServer(function(request,response){
     }
 });
 app.listen(3000);
+*/
