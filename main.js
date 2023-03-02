@@ -18,7 +18,7 @@ app.use(compression()); //웹브라우저가 compression을 통해 받은 압축
 app.use(helmet()); //express 보안 강화
 
 //get 요청에 대해서만 fs.readdir 작동
-app.get('*', function(request, response, next){
+app.get('*', (request, response, next)=>{
     //반복되는 fs.readdir 함수를 미들웨어로 선언
     fs.readdir('./data', function(error, filelist){
        request.list = filelist; //request 객체의 list 프로퍼티를 통해 모든 라우트 안에서 미들웨어(=함수)에서 사용 가능

@@ -1,14 +1,14 @@
-var express = require('express');
-var router = express.Router(); //router 객체 리턴
-var path = require('path');
-var fs = require('fs');
-var sanitizeHtml = require('sanitize-html');
-var template = require('../lib/template.js');
+let express = require('express');
+let router = express.Router(); //router 객체 리턴
+let path = require('path');
+let fs = require('fs');
+let sanitizeHtml = require('sanitize-html');
+let template = require('../lib/template.js');
 
-router.get('/create', function (request, response){
-    var title = 'WEB - create';
-    var list = template.list(request.list);
-    var html = template.HTML(title, list, `
+router.get('/create', (request, response) => {
+    let title = 'WEB - create';
+    let list = template.list(request.list);
+    let html = template.HTML(title, list, `
       <form action="/topic/create_process" method="post">
         <p><input type="text" name="title" placeholder="title"></p>
         <p>
@@ -22,34 +22,34 @@ router.get('/create', function (request, response){
     response.send(html);
 });
 
-router.post('/create_process', function(request, response){
-    /*var body = '';
+router.post('/create_process', (request, response) => {
+    /*let body = '';
     request.on('data', function(data){
         body = body + data;
     });
     request.on('end', function(){
-        var post = qs.parse(body);
-        var title = post.title;
-        var description = post.description;
+        let post = qs.parse(body);
+        let title = post.title;
+        let description = post.description;
         fs.writeFile(`data/${title}`, description, 'utf8', function(err){
             response.writeHead(302, {Location: `/?id=${title}`});
             response.end();
         })
     });*/
-    var post = request.body;
-    var title = post.title;
-    var description = post.description;
+    let post = request.body;
+    let title = post.title;
+    let description = post.description;
     fs.writeFile(`data/${title}`, description, 'utf8', function(err){
         response.redirect(`/topic/${title}`);
     });
 });
 
 router.get('/update/:pageId', function (request, response){
-    var filteredId = path.parse(request.params.pageId).base;
+    let filteredId = path.parse(request.params.pageId).base;
     fs.readFile(`data/${filteredId}`, 'utf8', function(err, description){
-        var title = request.params.pageId;
-        var list = template.list(request.list);
-        var html = template.HTML(title, list,
+        let title = request.params.pageId;
+        let list = template.list(request.list);
+        let html = template.HTML(title, list,
             `
         <form action="/topic/update_process" method="post">
           <input type="hidden" name="id" value="${title}">
@@ -70,10 +70,10 @@ router.get('/update/:pageId', function (request, response){
 });
 
 router.post('/update_process', function(request, response){
-    var post = request.body;
-    var id = post.id;
-    var title = post.title;
-    var description = post.description;
+    let post = request.body;
+    let id = post.id;
+    let title = post.title;
+    let description = post.description;
     fs.rename(`data/${id}`, `data/${title}`, function(error){
         fs.writeFile(`data/${title}`, description, 'utf8', function(err){
             // response.writeHead(302, {Location: `/?id=${title}`});
@@ -84,9 +84,9 @@ router.post('/update_process', function(request, response){
 });
 
 router.post('/delete_process', function (request, response){
-    var post = request.body;
-    var id = post.id;
-    var filteredId = path.parse(id).base;
+    let post = request.body;
+    let id = post.id;
+    let filteredId = path.parse(id).base;
     fs.unlink(`data/${filteredId}`, function(error){
         //redirection 기능
         // response.writeHead(302, {Location: `/`});
@@ -95,23 +95,23 @@ router.post('/delete_process', function (request, response){
     })
 });
 
-//url path에 get으로 parameter 전달
+//url path 에 get 으로 parameter 전달
 router.get('/:pageId', function (request, response, next) {
     // console.log(request.list);  //['Express', 'HTML'] 배열
 
-    var filteredId = path.parse(request.params.pageId).base;
+    let filteredId = path.parse(request.params.pageId).base;
 
     fs.readFile(`data/${filteredId}`, 'utf8', function(err, description){
         if(err){
             next(err);
         }else{
-            var title = request.params.pageId;
-            var sanitizedTitle = sanitizeHtml(title);
-            var sanitizedDescription = sanitizeHtml(description, {
+            let title = request.params.pageId;
+            let sanitizedTitle = sanitizeHtml(title);
+            let sanitizedDescription = sanitizeHtml(description, {
                 allowedTags:['h1']
             });
-            var list = template.list(request.list);
-            var html = template.HTML(sanitizedTitle, list,
+            let list = template.list(request.list);
+            let html = template.HTML(sanitizedTitle, list,
                 `<h2>${sanitizedTitle}</h2>${sanitizedDescription}`,
                 ` <a href="/topic/create">create</a>
                          <a href="/topic/update/${sanitizedTitle}">update</a>
