@@ -40,12 +40,16 @@ router.post('/create_process', (request, response) => {
     let title = post.title;
     let description = post.description;
     fs.writeFile(`data/${title}`, description, 'utf8', function(err){
+
         response.redirect(`/topic/${title}`);
+
     });
 });
 
 router.get('/update/:pageId', function (request, response){
+
     let filteredId = path.parse(request.params.pageId).base;
+
     fs.readFile(`data/${filteredId}`, 'utf8', function(err, description){
         let title = request.params.pageId;
         let list = template.list(request.list);
